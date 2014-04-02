@@ -36,7 +36,7 @@ public class Bean {
 
     @Property(name = "Map of booleans")
     @CheckBox
-    private Map<String, Boolean> map = new HashMap<String, Boolean>();
+    private Map<String, Boolean> map = new HashMap<>();
 
     public Bean() {
         map.put("z", false);
@@ -59,7 +59,7 @@ public class Bean {
 
     @Property
     @CheckBox
-    private List<Boolean> array = new ArrayList<Boolean>();
+    private List<Boolean> array = new ArrayList<>();
 
     @Property
     @Table
