@@ -6,13 +6,14 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
- * Created by IntelliJ IDEA.
- * User: lagon
- * Date: Oct 10, 2009
- * Time: 9:48:20 PM
- * To change this template use File | Settings | File Templates.
+ * Created by IntelliJ IDEA. User: lagon Date: Oct 10, 2009 Time: 9:48:20 PM To
+ * change this template use File | Settings | File Templates.
+ *
+ * @param <T>
  */
 public class SelectionSetModel<T> extends Model {
+
+    private static final long serialVersionUID = 1341619597270530067L;
 
     private T[] elements;
     private boolean[] elementEnabled;
@@ -79,7 +80,9 @@ public class SelectionSetModel<T> extends Model {
 
     private void setElementState(int idx, boolean state) {
         if (idx > elementEnabled.length) {
-            throw new IndexOutOfBoundsException("Index is higher that number of available elements. ( " + idx + " > " + elementEnabled.length + " )");
+            throw new IndexOutOfBoundsException(
+                    "Index is higher that number of available elements. ( "
+                    + idx + " > " + elementEnabled.length + " )");
         }
         boolean oldState = elementEnabled[idx];
         elementEnabled[idx] = state;

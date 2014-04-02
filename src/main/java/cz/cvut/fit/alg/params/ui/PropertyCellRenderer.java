@@ -17,14 +17,15 @@ import cz.cvut.fit.alg.params.PropertyState;
  */
 public class PropertyCellRenderer implements TableCellRenderer {
 
-    private Property property;
-    private JPanel panel;
+    private final Property property;
+    private final JPanel panel;
 
     public PropertyCellRenderer(Property property) {
         this.property = property;
-        panel = new JPanel(new GridLayout(0,1));
+        panel = new JPanel(new GridLayout(0, 1));
     }
 
+    @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
         Component rendererComponent = property.getRendererComponent();
         if (isSelected) {
@@ -36,8 +37,8 @@ public class PropertyCellRenderer implements TableCellRenderer {
             rendererComponent.setBackground(table.getBackground());
             panel.setBackground(table.getBackground());
         }
-        
-        if(property.getPropertyState() == PropertyState.DISABLED) {
+
+        if (property.getPropertyState() == PropertyState.DISABLED) {
             rendererComponent.setForeground(Color.gray);
         }
 

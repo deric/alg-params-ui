@@ -21,6 +21,7 @@ import cz.cvut.fit.alg.params.Property;
  */
 public class ComponentNameRenderer implements PropertyRenderer<Object, Annotation> {
 
+    @Override
     public Component getRendererComponent(final Property<Object> property, Annotation annotation) {
         final ValueModel model = new PropertyAdapter(property, "value", true);
         final JPanel panel = new JPanel(new BorderLayout());
@@ -28,11 +29,12 @@ public class ComponentNameRenderer implements PropertyRenderer<Object, Annotatio
 
         model.addValueChangeListener(new PropertyChangeListener() {
 
+            @Override
             public void propertyChange(PropertyChangeEvent evt) {
                 Object value = property.getValue();
                 String text = null;
 
-                if(value != null) {
+                if (value != null) {
                     if (value.getClass().isAnnotationPresent(cz.cvut.fit.alg.params.annotations.Component.class)) {
                         text = value.getClass().getAnnotation(cz.cvut.fit.alg.params.annotations.Component.class).name();
                     } else {
@@ -46,11 +48,15 @@ public class ComponentNameRenderer implements PropertyRenderer<Object, Annotatio
 
         panel.addPropertyChangeListener(new PropertyChangeListener() {
 
+            @Override
             public void propertyChange(PropertyChangeEvent evt) {
-                if ("foreground".equals(evt.getPropertyName())) {
-                    label.setForeground((Color) evt.getNewValue());
-                } else if ("background".equals(evt.getPropertyName())) {
-                    label.setBackground((Color) evt.getNewValue());
+                switch (evt.getPropertyName()) {
+                    case "foreground":
+                        label.setForeground((Color) evt.getNewValue());
+                        break;
+                    case "background":
+                        label.setBackground((Color) evt.getNewValue());
+                        break;
                 }
             }
         });

@@ -2,13 +2,13 @@ package cz.cvut.fit.alg.params.ui;
 
 import cz.cvut.fit.alg.params.api.DropDown;
 import cz.cvut.fit.alg.params.api.PropertyEditor;
+import cz.cvut.fit.alg.params.Property;
+import cz.cvut.fit.alg.params.context.PublishingContext;
 import com.jgoodies.binding.adapter.ComboBoxAdapter;
 import com.jgoodies.binding.beans.PropertyAdapter;
 import com.jgoodies.binding.value.ValueModel;
 import java.awt.Component;
 import javax.swing.JComboBox;
-import cz.cvut.fit.alg.params.Property;
-import cz.cvut.fit.alg.params.context.PublishingContext;
 
 /**
  * A {@link PropertyEditor} instance editing property values using a JComboBox.
@@ -16,6 +16,7 @@ import cz.cvut.fit.alg.params.context.PublishingContext;
  * @author ytoh
  */
 public class DropDownEditor implements PropertyEditor<Object, DropDown> {
+
     private final Object[] overrides;
 
     public DropDownEditor(Object[] overrides) {
@@ -26,10 +27,11 @@ public class DropDownEditor implements PropertyEditor<Object, DropDown> {
         this(null);
     }
 
+    @Override
     public Component getEditorComponent(Property<Object> property, DropDown annotation, PublishingContext context) {
         Object[] values;
 
-        if(overrides != null) {
+        if (overrides != null) {
             values = overrides;
         } else {
             values = annotation.value();

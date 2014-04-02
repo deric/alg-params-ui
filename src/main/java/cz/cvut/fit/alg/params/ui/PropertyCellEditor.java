@@ -16,23 +16,26 @@ import cz.cvut.fit.alg.params.Property;
  */
 public class PropertyCellEditor extends AbstractCellEditor implements TableCellEditor {
 
-    private Property property;
-    private JPanel panel;
+    private static final long serialVersionUID = 5547935951644376545L;
+
+    private final Property property;
+    private final JPanel panel;
 
     public PropertyCellEditor(Property property) {
         this.property = property;
         panel = new JPanel(new BorderLayout());
     }
 
+    @Override
     public Component getTableCellEditorComponent(final JTable table, Object value, boolean isSelected, final int row, int column) {
         property.setValue(value);
 
         Component editorComponent = property.getEditorComponent();
-        
+
         editorComponent.validate();
         panel.removeAll();
         panel.add(editorComponent, BorderLayout.CENTER);
-        if(panel.getComponentListeners().length == 0) {
+        if (panel.getComponentListeners().length == 0) {
             panel.addComponentListener(new ComponentAdapter() {
 
                 @Override
@@ -49,6 +52,7 @@ public class PropertyCellEditor extends AbstractCellEditor implements TableCellE
         return panel;
     }
 
+    @Override
     public Object getCellEditorValue() {
         return this.property.getValue();
     }

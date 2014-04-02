@@ -20,17 +20,13 @@ import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-/**
- * Created by IntelliJ IDEA.
- * User: lagon
- * Date: Oct 11, 2009
- * Time: 12:25:31 AM
- * To change this template use File | Settings | File Templates.
- */
-public class SelectionSetEditor extends JDialog implements PropertyEditor<SelectionSetModel, SelectionSet>, ActionListener, PropertyChangeListener, ListSelectionListener {
+public class SelectionSetEditor extends JDialog implements PropertyEditor<SelectionSetModel, SelectionSet>,
+                                                           ActionListener, PropertyChangeListener, ListSelectionListener {
 
-    private JList list;
-    private DefaultListModel listModel;
+    private static final long serialVersionUID = 2175249008565252624L;
+
+    private final JList list;
+    private final DefaultListModel listModel;
     JPanel mainPanel;
     JButton dialogCloseButton;
     JButton editorButton;
@@ -80,7 +76,9 @@ public class SelectionSetEditor extends JDialog implements PropertyEditor<Select
         pack();
     }
 
-    public Component getEditorComponent(Property<SelectionSetModel> selectionSetModelProperty, SelectionSet annotation, PublishingContext context) {
+    @Override
+    public Component getEditorComponent(Property<SelectionSetModel> selectionSetModelProperty,
+            SelectionSet annotation, PublishingContext context) {
 
         this.annotation = annotation;
         property = selectionSetModelProperty;
@@ -137,6 +135,7 @@ public class SelectionSetEditor extends JDialog implements PropertyEditor<Select
 
     }
 
+    @Override
     public void valueChanged(ListSelectionEvent e) {
         SelectionSetModel selSet = property.getValue();
         selSet.disableAllElements();
@@ -155,6 +154,7 @@ public class SelectionSetEditor extends JDialog implements PropertyEditor<Select
 
     private class SelectionSetEditorSubscriber implements Subscriber {
 
+        @Override
         public void notifyOf(Publisher publisher, java.util.List value, String key) {
 //            System.out.printf("Editor property = %s\n",property.getValue());
         }

@@ -71,8 +71,9 @@ public class AnnotationPropertyExtractor implements PropertyExtractor {
      */
     private final Map<Class<?>, Class<? extends PropertyRenderer>> defaultRenderers;
 
-    ContextAwareConstraintValidatorFactory constraintValidatorFactory = new ContextAwareConstraintValidatorFactory(
-            new ConstraintValidatorFactoryImpl());
+    ContextAwareConstraintValidatorFactory constraintValidatorFactory
+            = new ContextAwareConstraintValidatorFactory(
+                    new ConstraintValidatorFactoryImpl());
 
     /**
      * validator to validate input values
@@ -88,12 +89,12 @@ public class AnnotationPropertyExtractor implements PropertyExtractor {
     private final boolean shouldSandbox;
 
     static {
-        cache = new HashMap<Object, List<Property>>();
+        cache = new HashMap<>();
     }
 
     /**
-     * Creates a default <code>AnnotationPropertyExtractor</code> instance
-     * with an empty dynamic context.
+     * Creates a default <code>AnnotationPropertyExtractor</code> instance with
+     * an empty dynamic context.
      */
     public AnnotationPropertyExtractor() {
         this(new DefaultPublishingContext(new DefaultContext()), false);
@@ -104,11 +105,11 @@ public class AnnotationPropertyExtractor implements PropertyExtractor {
     }
 
     /**
-     * Creates a <code>AnnotationPropertyExtractor</code> instance with
-     * the supplied dynamic context.
+     * Creates a <code>AnnotationPropertyExtractor</code> instance with the
+     * supplied dynamic context.
      *
-     * @param context       {@link Context} to be used with this
-     *                      <code>PropertyExtractor</code>
+     * @param context {@link Context} to be used with this
+     * <code>PropertyExtractor</code>
      * @param shouldSandbox
      */
     public AnnotationPropertyExtractor(PublishingContext context,
@@ -122,14 +123,14 @@ public class AnnotationPropertyExtractor implements PropertyExtractor {
                 constraintValidatorFactory);
         this.validator = configuration.buildValidatorFactory().getValidator();
 
-        Map<Class<?>, Class<? extends PropertyEditor>> editors = new HashMap<Class<?>, Class<? extends PropertyEditor>>();
+        Map<Class<?>, Class<? extends PropertyEditor>> editors = new HashMap<>();
         editors.put(Boolean.class, CheckBoxEditor.class);
         editors.put(Boolean.TYPE, CheckBoxEditor.class);
         editors.put(String.class, TextFieldEditor.class);
         editors.put(Integer.TYPE, IntegerTextFieldEditor.class);
         editors.put(Double.TYPE, DoubleTextFieldEditor.class);
         defaultEditors = Collections.unmodifiableMap(editors);
-        Map<Class<?>, Class<? extends PropertyRenderer>> renderers = new HashMap<Class<?>, Class<? extends PropertyRenderer>>();
+        Map<Class<?>, Class<? extends PropertyRenderer>> renderers = new HashMap<>();
         renderers.put(Double.TYPE, DoubleLabel.class);
         defaultRenderers = Collections.unmodifiableMap(renderers);
     }
@@ -137,16 +138,16 @@ public class AnnotationPropertyExtractor implements PropertyExtractor {
     /**
      * <p>
      * Extracts fields annotated with
-     * {@link org.ytoh.configurations.annotations.Property}
-     * and their defined {@link Editor}s and {@link Renderer}s into instances of
+     * {@link org.ytoh.configurations.annotations.Property} and their defined
+     * {@link Editor}s and {@link Renderer}s into instances of
      * {@link Property}.</p>
      *
      * @param o object to extract properties from
      * @return a list of <code>Property</code> instances representing properties
-     *         defined on the supplied object
+     * defined on the supplied object
      * @throws ConfigException if more then one <code>Editor</code> or
-       *                                <code>Renderer</code> is defined for any property or if a problem was
-     *                                encountered during their instantiation.
+     * <code>Renderer</code> is defined for any property or if a problem was
+     * encountered during their instantiation.
      */
     @Override
     public List<Property> propertiesFor(Object o) {
@@ -155,12 +156,8 @@ public class AnnotationPropertyExtractor implements PropertyExtractor {
 
             return cached != null ? cached : extractProperty(o);
         } catch (InvocationTargetException ex) {
-            throw new ConfigException("Could not extract properties. ",                                             ex);
-        } catch (NoSuchMethodException ex) {
-            throw new ConfigException("Could not extract properties.", ex);
-        } catch (InstantiationException ex) {
-            throw new ConfigException("Could not extract properties.", ex);
-        } catch (IllegalAccessException ex) {
+            throw new ConfigException("Could not extract properties. ", ex);
+        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException ex) {
             throw new ConfigException("Could not extract properties.", ex);
         }
     }
@@ -186,39 +183,42 @@ public class AnnotationPropertyExtractor implements PropertyExtractor {
     /**
      * @param o object to extract properties from
      * @return a list of properties for the supplied object
-     * @throws java.lang.InstantiationException
-     *                                          in case of problems instantiating property editors or renderers
-     * @throws java.lang.IllegalAccessException
-     *                                          in case of problems instantiating property editors or renderers
+     * @throws java.lang.InstantiationException in case of problems
+     * instantiating property editors or renderers
+     * @throws java.lang.IllegalAccessException in case of problems
+     * instantiating property editors or renderers
      * @see PropertyExtractor#propertiesFor(java.lang.Object)
      */
-    private List<Property> extractProperty(final Object o) throws InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+    private List<Property> extractProperty(final Object o) throws InstantiationException,
+                                                                  IllegalAccessException,
+                                                                  InvocationTargetException,
+                                                                  NoSuchMethodException {
         final Object sandbox = shouldSandbox ? o.getClass().newInstance() : o;
         Sandbox sandboxContext = Sandbox.newInstance(sandbox);
         // properties extraction
         List<Field> fields = extractDeclaredFields(o.getClass());
-        List<MutableProperty> properties = new ArrayList<MutableProperty>();
+        List<MutableProperty> properties = new ArrayList<>();
         for (Field field : fields) {
             if (isProperty(field)) {
                 MutableProperty property = null;
 
                 if (isComponentProperty(field.getType())) {
                     property = new DefaultComponentProperty(field.getAnnotation(
-                            cz.cvut.fit.alg.params.annotations.Property.class),                                                            field, sandbox,
-                                                            validator);
+                            cz.cvut.fit.alg.params.annotations.Property.class), field, sandbox,
+                            validator);
                 } else if (isArrayProperty(field.getType())) {
                     property = new DefaultArrayProperty(field.getAnnotation(
-                            cz.cvut.fit.alg.params.annotations.Property.class),                                                        field, sandbox,
-                                                        validator);
+                            cz.cvut.fit.alg.params.annotations.Property.class), field, sandbox,
+                            validator);
                 } else if (isListProperty(field.getType())) {
                     property = new DefaultListProperty(field.getAnnotation(
-                            cz.cvut.fit.alg.params.annotations.Property.class),                                                       field, sandbox, validator);
+                            cz.cvut.fit.alg.params.annotations.Property.class), field, sandbox, validator);
                 } else if (isMappedProperty(field.getType())) {
                     property = new DefaultMapProperty(field.getAnnotation(
-                            cz.cvut.fit.alg.params.annotations.Property.class),                                                      field, sandbox, validator);
+                            cz.cvut.fit.alg.params.annotations.Property.class), field, sandbox, validator);
                 } else {
                     property = new DefaultProperty(field.getAnnotation(
-                            cz.cvut.fit.alg.params.annotations.Property.class),                                                   field, sandbox, validator);
+                            cz.cvut.fit.alg.params.annotations.Property.class), field, sandbox, validator);
                 }
 
                 Class fieldType = property.getFieldType();
@@ -240,12 +240,12 @@ public class AnnotationPropertyExtractor implements PropertyExtractor {
                 // set sandbox to mirror the original
                 if (shouldSandbox) {
                     PropertyUtils.setProperty(sandbox, property.getFieldName(),
-                                              PropertyUtils.getProperty(o,
-                                                                        property.getFieldName()));
+                            PropertyUtils.getProperty(o,
+                                    property.getFieldName()));
                 }
 
                 property.setValue(PropertyUtils.getProperty(sandbox,
-                                                            property.getFieldName()));
+                        property.getFieldName()));
 
                 String fieldName = property.getFieldName();
                 // workaround: PropertyUtils does not property detect the state property for single letter properties
@@ -255,7 +255,7 @@ public class AnnotationPropertyExtractor implements PropertyExtractor {
                 if (PropertyUtils.isReadable(sandbox, fieldName + "State")) {
                     property.setPropertyState(
                             (PropertyState) PropertyUtils.getProperty(sandbox,
-                                                                      fieldName + "State"));
+                                    fieldName + "State"));
                 }
 
                 // add the property to a specific context
@@ -270,20 +270,19 @@ public class AnnotationPropertyExtractor implements PropertyExtractor {
 
     /**
      * <p>
-     * Instantiates and returns a default {@link Component} used to edit
-     * the given property based on the type of the underlying field.</p>
+     * Instantiates and returns a default {@link Component} used to edit the
+     * given property based on the type of the underlying field.</p>
      * <p>
-     * If no type-specific {@link PropertyEditor} is registered as
-     * the default editor specified a NullObject <code>PropertyEditor</code>
-     * is used.</p>
+     * If no type-specific {@link PropertyEditor} is registered as the default
+     * editor specified a NullObject <code>PropertyEditor</code> is used.</p>
      *
      * @param type of the underlying field
-     * @return an instance of a <code>Component</code> to be used to edit
-     *         the supplied property
+     * @return an instance of a <code>Component</code> to be used to edit the
+     * supplied property
      * @throws IllegalAccessException if the default editor component cannot be
-     *                                instantiated.
+     * instantiated.
      * @throws InstantiationException if the default editor component cannot be
-     *                                instantiated.
+     * instantiated.
      * @see PropertyExtractor #DEFAULT_EDITORS
      */
     private <T, A extends Annotation> PropertyEditor<T, A> getDefaultEditor(
@@ -307,20 +306,20 @@ public class AnnotationPropertyExtractor implements PropertyExtractor {
 
     /**
      * <p>
-     * Instantiates and returns a default {@link Component} used to render
-     * the given property based on the type of the underlying field.</p>
+     * Instantiates and returns a default {@link Component} used to render the
+     * given property based on the type of the underlying field.</p>
      * <p>
-     * If no type-specific {@link PropertyRenderer} is registered as
-     * the default renderer specified a NullObject <code>PropertyRenderer</code>
-     * is used.</p>
+     * If no type-specific {@link PropertyRenderer} is registered as the default
+     * renderer specified a NullObject <code>PropertyRenderer</code> is
+     * used.</p>
      *
      * @param type of the underlying field
-     * @return an instance of a <code>Component</code> to be used to render
-     *         the supplied property
+     * @return an instance of a <code>Component</code> to be used to render the
+     * supplied property
      * @throws IllegalAccessException if the default renderer component cannot
-     *                                be instantiated.
+     * be instantiated.
      * @throws InstantiationException if the default renderer component cannot
-     *                                be instantiated.
+     * be instantiated.
      * @see PropertyExtractor #DEFAULT_RENDERERS
      */
     private PropertyRenderer getDefaultRenderer(Class<?> type) throws InstantiationException, IllegalAccessException {
@@ -335,14 +334,15 @@ public class AnnotationPropertyExtractor implements PropertyExtractor {
      * Indicates whether or not the given field is a property.</p>
      *
      * @param field
-     * @return <code>true</code> if the field is a property
-     *         (annotated with {@link org.ytoh.configurations.annotations.Property})
+     * @return <code>true</code> if the field is a property (annotated with
+     * {@link org.ytoh.configurations.annotations.Property})
      */
     @Override
     public boolean isProperty(Field field) {
         return CollectionUtils.exists(Arrays.asList(
                 field.getDeclaredAnnotations()), new Predicate() {
 
+            @Override
                     public boolean evaluate(Object o) {
                         return ((Annotation) o) instanceof cz.cvut.fit.alg.params.annotations.Property;
                     }
@@ -358,13 +358,15 @@ public class AnnotationPropertyExtractor implements PropertyExtractor {
      *
      * @param field to analyze
      * @return custom editor annotation
-     * @throws ConfigException if the suppied field is annotated with     *                                more then one custom editor annotations
+     * @throws ConfigException if the suppied field is annotated with * more
+     * then one custom editor annotations
      */
     private Annotation getPropertyEditor(Field field) {
         List<Annotation> editors = Annotations.like(Editor.class, field);
         if (editors.size() > 1) {
             throw new ConfigException(
-                    "Properties can have only one editor (found " + editors.size() + ": " + editors + ") for field: " + field.getName());
+                    "Properties can have only one editor (found " + editors.size()
+                    + ": " + editors + ") for field: " + field.getName());
         }
 
         return editors.isEmpty() ? null : editors.get(0);
@@ -379,13 +381,15 @@ public class AnnotationPropertyExtractor implements PropertyExtractor {
      *
      * @param field to analyze
      * @return custom renderer annotation
-     * @throws ConfigException if the supplied field is annotated with     *                                more then one custom renderer annotations
+     * @throws ConfigException if the supplied field is annotated with * more
+     * then one custom renderer annotations
      */
     private Annotation getPropertyRenderer(Field field) {
         List<Annotation> renderers = Annotations.like(Renderer.class, field);
         if (renderers.size() > 1) {
             throw new ConfigException(
-                    "Properties can have only one renderer (found " + renderers.size() + ": " + renderers + ") for field: " + field.getName());
+                    "Properties can have only one renderer (found " + renderers.size()
+                    + ": " + renderers + ") for field: " + field.getName());
         }
 
         return renderers.isEmpty() ? null : renderers.get(0);
@@ -427,7 +431,7 @@ public class AnnotationPropertyExtractor implements PropertyExtractor {
      *
      * @param type <code>Class</code> type to check
      * @return <code>true</code> if it is a Component, <code>false</code>
-     *         otherwise
+     * otherwise
      */
     private boolean isComponentProperty(Class<?> type) {
         return type.isAnnotationPresent(

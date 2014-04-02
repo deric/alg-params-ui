@@ -31,7 +31,7 @@ public class PropertyTable extends JTable {
      */
     private List<PropertyCellEditor> editors;
     /**
-     * property renderers
+     * property renderer
      */
     private List<PropertyCellRenderer> renderers;
 
@@ -62,22 +62,25 @@ public class PropertyTable extends JTable {
 
         this.setModel(model);
 
-        this.editors = new ArrayList<PropertyCellEditor>(CollectionUtils.collect(properties, new Transformer() {
+        this.editors = new ArrayList<>(CollectionUtils.collect(properties, new Transformer() {
 
+            @Override
             public Object transform(Object input) {
                 return new PropertyCellEditor((Property) input);
             }
         }));
 
-        this.renderers = new ArrayList<PropertyCellRenderer>(CollectionUtils.collect(properties, new Transformer() {
+        this.renderers = new ArrayList<>(CollectionUtils.collect(properties, new Transformer() {
 
+            @Override
             public Object transform(Object input) {
                 return new PropertyCellRenderer((Property) input);
             }
         }));
 
-        this.descriptions = new ArrayList<DescriptionCellRenderer>(CollectionUtils.collect(properties, new Transformer() {
+        this.descriptions = new ArrayList<>(CollectionUtils.collect(properties, new Transformer() {
 
+            @Override
             public Object transform(Object input) {
                 return new DescriptionCellRenderer((Property) input);
             }

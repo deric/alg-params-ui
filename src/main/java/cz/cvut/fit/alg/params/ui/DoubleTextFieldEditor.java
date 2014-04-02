@@ -10,13 +10,14 @@ import cz.cvut.fit.alg.params.Property;
 import cz.cvut.fit.alg.params.context.PublishingContext;
 
 /**
- * A {@link PropertyEditor} instance editing numer properties with a formatted
+ * A {@link PropertyEditor} instance editing number properties with a formatted
  * JTextField.
  *
  * @author ytoh
  */
 public class DoubleTextFieldEditor implements PropertyEditor<Object, TextField> {
 
+    @Override
     public Component getEditorComponent(final Property<Object> property, TextField annotation, PublishingContext context) {
         final ValueModel model = new PropertyAdapter(property, "value", true);
         return BasicComponentFactory.createFormattedTextField(model, new DecimalFormat("#.###"));

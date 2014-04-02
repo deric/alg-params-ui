@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package cz.cvut.fit.alg.params.ui;
 
 import cz.cvut.fit.alg.params.api.DynamicDropDown;
@@ -22,50 +18,28 @@ import cz.cvut.fit.alg.params.context.Subscriber;
 import cz.cvut.fit.alg.params.api.DynamicDropDown.Label;
 
 /**
- * A {@link PropertyEditor} instance retrieving values dynamicaly for a {@link Context} instance.
+ * A {@link PropertyEditor} instance retrieving values dynamically for a
+ * {@link Context} instance.
  *
  * @author ytoh
  */
 public class DynamicDropDownEditor implements PropertyEditor<Object, DynamicDropDown> {
 
-    public Component getEditorComponent(Property<Object> property, DynamicDropDown annotation, final PublishingContext context) {
+    @Override
+    public Component getEditorComponent(Property<Object> property, final DynamicDropDown annotation,
+            final PublishingContext context) {
         final Class<?> type = annotation.type();
         String key = annotation.key();
-        final Label labelType = annotation.label();
 
         final ValueModel model = new PropertyAdapter(property, "value");
         final JComboBox box = new JComboBox();
-        
+
         Subscriber subscriber = new Subscriber() {
 
+            @Override
             public void notifyOf(Publisher publisher, List value, String key) {
                 box.setModel(new ComboBoxAdapter(value.toArray(), model));
-                box.setRenderer(new DefaultListCellRenderer() {
-
-                    @Override
-                    public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                        String label = null;
-
-                        switch (labelType) {
-                            case NAME:
-                                if (value != null) {
-                                    if (value.getClass().isAnnotationPresent(cz.cvut.fit.alg.params.annotations.Component.class)) {
-                                        label = value.getClass().getAnnotation(cz.cvut.fit.alg.params.annotations.Component.class).name();
-                                    }
-
-                                    if (StringUtils.isEmpty(label)) {
-                                        label = value.getClass().getSimpleName();
-                                    }
-                                }
-                                break;
-                            case VALUE:
-                                label = String.valueOf(value);
-                                break;
-                        }
-
-                        return super.getListCellRendererComponent(list, label, index, isSelected, cellHasFocus);
-                    }
-                });
+                box.setRenderer(new MyCellRenderer(annotation.label()));
             }
         };
 
@@ -73,5 +47,41 @@ public class DynamicDropDownEditor implements PropertyEditor<Object, DynamicDrop
 
         subscriber.notifyOf(context, context.getList(type, key), key);
         return box;
+    }
+
+    private class MyCellRenderer extends DefaultListCellRenderer {
+
+        private final Label labelType;
+
+        public MyCellRenderer(Label labelType) {
+            this.labelType = labelType;
+        }
+
+        private static final long serialVersionUID = -5460014450312978883L;
+
+        @Override
+        public Component getListCellRendererComponent(JList list, Object value,
+                int index, boolean isSelected, boolean cellHasFocus) {
+            String label = null;
+
+            switch (labelType) {
+                case NAME:
+                    if (value != null) {
+                        if (value.getClass().isAnnotationPresent(cz.cvut.fit.alg.params.annotations.Component.class)) {
+                            label = value.getClass().getAnnotation(cz.cvut.fit.alg.params.annotations.Component.class).name();
+                        }
+
+                        if (StringUtils.isEmpty(label)) {
+                            label = value.getClass().getSimpleName();
+                        }
+                    }
+                    break;
+                case VALUE:
+                    label = String.valueOf(value);
+                    break;
+            }
+
+            return super.getListCellRendererComponent(list, label, index, isSelected, cellHasFocus);
+        }
     }
 }
