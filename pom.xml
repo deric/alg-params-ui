@@ -37,11 +37,6 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>1.5.6</version>
-        </dependency>
-        <dependency>
             <groupId>net.java.dev.swing-layout</groupId>
             <artifactId>swing-layout</artifactId>
             <version>1.0.2</version>
