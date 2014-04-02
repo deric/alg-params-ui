@@ -13,6 +13,7 @@
     <packaging>jar</packaging>
 
     <name>alg-params-ui</name>
+    <description>UI which is generated based on annotaion</description>
     <url>https://github.com/deric/alg-params-ui</url>
 
     <properties>
